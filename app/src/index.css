@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #2c0404;
+  --bg-card: #3a0a0a;
+  --bg-elevated: #451111;
+  --accent: #d7cc8f;
+  --gold-bright: #f0e3a8;
+  --cinema-red: #b91c1c;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: #150101;
+  color: var(--accent);
+  font-family: Inter, Manrope, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Тонкий скроллbar в тонах заведения */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(215, 204, 143, 0.25) transparent;
+}
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(215, 204, 143, 0.25);
+  border-radius: 4px;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Зерно киноплёнки поверх фото */
+.film-grain {
+  position: relative;
+}
+.film-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Перфорация по бокам билета */
+.ticket-perforation {
+  --hole: var(--bg-primary);
+  background-image: radial-gradient(circle at 0 50%, var(--hole) 5px, transparent 5.5px),
+    radial-gradient(circle at 100% 50%, var(--hole) 5px, transparent 5.5px);
+  background-size: 22px 22px;
+  background-position: 0 0, 100% 0;
+  background-repeat: repeat-y;
+}
+
+/* Полукруглые вырезы на линии отрыва */
+.ticket-notch {
+  position: relative;
+}
+.ticket-notch::before,
+.ticket-notch::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  transform: translateY(-50%);
+}
+.ticket-notch::before {
+  left: -9px;
+}
+.ticket-notch::after {
+  right: -9px;
+}
+
+/* Пульсация выбранного стола */
+@keyframes table-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(240, 227, 168, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 26px rgba(240, 227, 168, 0.7);
+  }
+}
+.table-selected {
+  animation: table-glow 1.6s ease-in-out infinite;
+}
+
+/* Встряска занятого стола */
+@keyframes table-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-3px);
+  }
+  75% {
+    transform: translateX(3px);
+  }
+}
+.table-shake {
+  animation: table-shake 0.2s ease-in-out;
+}
+
+/* Пульсация стрелки скролла */
+@keyframes soft-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+.soft-bounce {
+  animation: soft-bounce 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .table-selected,
+  .soft-bounce {
+    animation: none;
+  }
+}
