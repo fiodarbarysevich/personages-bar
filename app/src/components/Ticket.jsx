@@ -1,4 +1,5 @@
-import { QRCodeSVG } from 'qrcode.react'
+import { Clapperboard } from 'lucide-react'
+import { TABLES } from '../data/mockData'
 import { Logo, Ornament } from './ui'
 
 const WEEKDAYS = ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']
@@ -15,6 +16,9 @@ export function formatDateRu(iso) {
 }
 
 export default function Ticket({ booking }) {
+  const table = TABLES.find((t) => t.id === booking.tableId)
+  const place = table ? table.label : booking.tableId
+
   return (
     <div className="ticket-perforation bg-bg-card rounded-2xl border border-accent/25 overflow-hidden">
       {/* Верхняя часть */}
@@ -24,9 +28,11 @@ export default function Ticket({ booking }) {
           Кинобар · Минск
         </p>
         <Ornament className="my-5" />
-        <p className="font-display text-3xl text-gold-bright tracking-wider">№ {booking.id}</p>
-        <p className="text-accent text-sm mt-3">{formatDateRu(booking.date)}</p>
-        <p className="font-display text-xl text-accent mt-1">{booking.time}</p>
+        <p className="text-accent text-sm">{formatDateRu(booking.date)}</p>
+        <p className="font-display text-4xl text-gold-bright mt-2">{booking.time}</p>
+        <p className="text-[10px] uppercase tracking-label text-accent-dim mt-3">
+          Вход · Admit one
+        </p>
       </div>
 
       {/* Линия отрыва */}
@@ -39,13 +45,11 @@ export default function Ticket({ booking }) {
           <p className="text-accent">{booking.name}</p>
           <p className="text-accent-dim text-[11px] uppercase tracking-label pt-2">Место</p>
           <p className="text-accent">
-            Ряд {booking.tableId.replace('T', '')} · {booking.guests}{' '}
+            {place} · {booking.guests}{' '}
             {booking.guests === 1 ? 'гость' : booking.guests < 5 ? 'гостя' : 'гостей'}
           </p>
         </div>
-        <div className="bg-accent p-2 rounded-lg shrink-0">
-          <QRCodeSVG value={`PERSONAGES:${booking.id}`} size={72} bgColor="#D7CC8F" fgColor="#2C0404" />
-        </div>
+        <Clapperboard size={44} strokeWidth={1} className="text-accent/25 shrink-0" />
       </div>
     </div>
   )

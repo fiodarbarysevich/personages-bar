@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 export function Logo({ size = 'text-xl' }) {
   return (
     <div className={`font-display ${size} tracking-logo text-accent select-none`}>
-      PERSONAGES
+      ПЕРСОНАЖИ
     </div>
   )
 }

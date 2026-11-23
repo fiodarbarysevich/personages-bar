@@ -126,9 +126,6 @@ export default function BookingParams() {
             <Plus size={16} strokeWidth={1.5} />
           </button>
         </div>
-        <p className="text-center text-accent-dim text-[12px] mt-3">
-          Для компаний больше 8 — напишите нам в direct
-        </p>
       </div>
 
       {/* Лимит */}

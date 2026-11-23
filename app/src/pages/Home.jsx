@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { AtSign, ChevronDown, Clock, MapPin } from 'lucide-react'
+import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import EventCard from '../components/EventCard'
 import { Button, Logo, Ornament } from '../components/ui'
@@ -34,13 +35,54 @@ function PhotoStub({ className = '', label }) {
   )
 }
 
+// Горизонтальная лента с автопрокруткой (контент дублируется для бесшовного цикла)
+function AutoScrollRow({ children, className = '' }) {
+  const ref = useRef(null)
+  const paused = useRef(false)
+  const resumeTimer = useRef(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const id = setInterval(() => {
+      if (paused.current) return
+      const items = el.children
+      const step = items.length > 1 ? items[1].offsetLeft - items[0].offsetLeft : el.clientWidth
+      const half = el.scrollWidth / 2
+      if (half > 0 && el.scrollLeft + step >= half) el.scrollLeft -= half
+      el.scrollBy({ left: step, behavior: 'smooth' })
+    }, 2600)
+    return () => clearInterval(id)
+  }, [])
+
+  const pause = () => {
+    paused.current = true
+    clearTimeout(resumeTimer.current)
+    resumeTimer.current = setTimeout(() => {
+      paused.current = false
+    }, 2500)
+  }
+
+  return (
+    <div
+      ref={ref}
+      onPointerDown={pause}
+      onTouchStart={pause}
+      className={`flex overflow-x-auto no-scrollbar ${className}`}
+    >
+      {children}
+      {children}
+    </div>
+  )
+}
+
 export default function Home() {
   const navigate = useNavigate()
 
   return (
     <div className="h-full overflow-y-auto no-scrollbar">
-      {/* Hero */}
-      <section className="relative h-[78%] min-h-[540px] flex flex-col">
+      {/* Hero — занимает весь экран, остальное открывается только скроллом */}
+      <section className="relative h-full flex flex-col">
         <PhotoStub className="absolute inset-0 border-0" />
         <div
           className="absolute inset-0"
@@ -54,7 +96,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
           >
-            <Logo size="text-[28px]" />
+            <Logo size="text-[26px]" />
             <Ornament className="my-5 w-48 mx-auto" />
             <p className="text-accent-dim text-sm">Атмосферный кинобар в центре Минска</p>
             <p className="flex items-center justify-center gap-1.5 text-accent-dim text-[13px] mt-2">
@@ -71,7 +113,7 @@ export default function Home() {
             <Button onClick={() => navigate('/booking')}>Забронировать стол</Button>
           </motion.div>
         </div>
-        <div className="relative pb-5 flex justify-center text-accent-dim">
+        <div className="relative pb-6 flex justify-center text-accent-dim">
           <ChevronDown size={20} strokeWidth={1.5} className="soft-bounce" />
         </div>
       </section>
@@ -85,11 +127,11 @@ export default function Home() {
           винил с саундтреками и коктейли, названные в честь героев кино. Классический Голливуд,
           нуар и берлинский стиль — в центре Минска.
         </p>
-        <div className="flex gap-3 mt-6 overflow-x-auto no-scrollbar -mx-6 px-6 snap-x">
-          <PhotoStub className="w-[220px] h-[150px] rounded-xl shrink-0 snap-center" label="Зал" />
-          <PhotoStub className="w-[220px] h-[150px] rounded-xl shrink-0 snap-center" label="Витраж «Форрест Гамп»" />
-          <PhotoStub className="w-[220px] h-[150px] rounded-xl shrink-0 snap-center" label="Барная стойка" />
-        </div>
+        <AutoScrollRow className="gap-3 mt-6 -mx-6 px-6">
+          <PhotoStub className="w-[220px] h-[150px] rounded-xl shrink-0" label="Зал" />
+          <PhotoStub className="w-[220px] h-[150px] rounded-xl shrink-0" label="Витраж «Форрест Гамп»" />
+          <PhotoStub className="w-[220px] h-[150px] rounded-xl shrink-0" label="Барная стойка" />
+        </AutoScrollRow>
         <div className="mt-6 space-y-2.5 text-[13px] text-accent-dim">
           <p className="flex items-center gap-2">
             <Clock size={14} strokeWidth={1.5} />
@@ -107,19 +149,11 @@ export default function Home() {
       {/* Афиша */}
       <motion.section {...fadeUp} className="pt-8 pb-8">
         <h2 className="font-display text-2xl text-accent px-6 mb-5">Афиша</h2>
-        <div className="flex gap-4 overflow-x-auto no-scrollbar px-6 snap-x pb-1">
-          {EVENTS.map((ev, i) => (
-            <motion.div
-              key={ev.id}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, ease: 'easeOut', delay: i * 0.1 }}
-            >
-              <EventCard event={ev} />
-            </motion.div>
+        <AutoScrollRow className="gap-4 px-6 pb-1">
+          {EVENTS.map((ev) => (
+            <EventCard key={ev.id} event={ev} />
           ))}
-        </div>
+        </AutoScrollRow>
         <p className="text-accent-dim text-[12px] text-center mt-4">
           Подробности — в нашем Instagram
         </p>
@@ -131,7 +165,7 @@ export default function Home() {
       <motion.section {...fadeUp} className="px-6 py-10">
         <Button onClick={() => navigate('/booking')}>Забронировать стол</Button>
         <p className="text-center text-accent-dim text-[12px] mt-4 italic">
-          Дорогие зрители, показ начнётся вовремя.
+          Выберите дату и время — остальное мы сделаем сами.
         </p>
       </motion.section>
     </div>

@@ -28,15 +28,17 @@ export const EVENTS = [
   },
 ]
 
-// Координаты — центр стола и размеры в процентах от плана зала (plan.png)
+// Координаты — центр стола и размеры в процентах от плана зала (plan.png, 1152×648)
 export const TABLES = [
-  { id: 'T1', label: 'Стол 1', shape: 'square', seats: 2, x: 12, y: 16, w: 10, h: 12, note: 'Уютный, для двоих' },
-  { id: 'T2', label: 'Стол 2', shape: 'oval-v', seats: 4, x: 86, y: 22, w: 12, h: 18, note: 'У окна' },
-  { id: 'T3', label: 'Стол 3', shape: 'oval-v', seats: 4, x: 11, y: 47, w: 12, h: 20, note: 'Вдоль стены' },
-  { id: 'T4', label: 'Стол 4', shape: 'oval-h', seats: 6, x: 50, y: 52, w: 26, h: 16, note: 'Центр зала, лучший вид на экран' },
-  { id: 'T5', label: 'Стол 5', shape: 'oval-v', seats: 4, x: 87, y: 50, w: 12, h: 18, note: 'У стены' },
-  { id: 'T6', label: 'Стол 6', shape: 'square', seats: 4, x: 12, y: 82, w: 11, h: 13, note: 'У входа' },
-  { id: 'T7', label: 'Стол 7', shape: 'oval-h', seats: 4, x: 42, y: 85, w: 20, h: 12, note: 'У самого бара' },
+  { id: 'T1', label: 'Стол 1', shape: 'circle', seats: 4, x: 20.7, y: 39.0, w: 9.5, h: 17.0, note: 'Круглый, у левой стены' },
+  { id: 'T2', label: 'Стол 2', shape: 'circle', seats: 4, x: 60.0, y: 37.0, w: 9.5, h: 17.0, note: 'Круглый, справа от бара' },
+  { id: 'T3', label: 'Стол 3', shape: 'circle', seats: 4, x: 20.2, y: 70.2, w: 9.5, h: 17.0, note: 'В глубине зала' },
+  { id: 'T4', label: 'Стол 4', shape: 'oval-h', seats: 4, x: 41.2, y: 74.1, w: 9.5, h: 11.6, note: 'В центре зала' },
+  { id: 'B1', label: 'Барный стул 1', shape: 'stool', seats: 1, x: 28.6, y: 21.6, w: 3.8, h: 6.8, note: 'У барной стойки' },
+  { id: 'B2', label: 'Барный стул 2', shape: 'stool', seats: 1, x: 33.9, y: 21.6, w: 3.8, h: 6.8, note: 'У барной стойки' },
+  { id: 'B3', label: 'Барный стул 3', shape: 'stool', seats: 1, x: 39.5, y: 21.6, w: 3.8, h: 6.8, note: 'У барной стойки' },
+  { id: 'B4', label: 'Барный стул 4', shape: 'stool', seats: 1, x: 45.6, y: 21.6, w: 3.8, h: 6.8, note: 'У барной стойки' },
+  { id: 'S1', label: 'Секретный зал', shape: 'long', seats: 8, x: 80.1, y: 56.3, w: 13.0, h: 12.3, note: 'Отдельный зал для своей компании' },
 ]
 
 export const WORKING_HOURS = {
@@ -60,6 +62,5 @@ export const TIME_SLOTS = (() => {
 
 export const BAR_RULES = [
   'Бронь стола ограничена 2 часами.',
-  'На пятницу и субботу рекомендуем бронировать за 2–3 дня.',
   'Если по истечении 20 минут гости не сообщили о задержке — бронь аннулируется.',
 ]

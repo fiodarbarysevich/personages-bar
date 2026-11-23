@@ -29,7 +29,6 @@ export default function Confirm() {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('+375 ')
   const [comment, setComment] = useState('')
-  const [agreed, setAgreed] = useState(false)
   const [errors, setErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
 
@@ -51,7 +50,7 @@ export default function Confirm() {
   }
 
   const submit = () => {
-    if (!validate() || !agreed || submitting) return
+    if (!validate() || submitting) return
     setSubmitting(true)
     // Имитация запроса к бэкенду
     setTimeout(() => {
@@ -66,7 +65,7 @@ export default function Confirm() {
     }, 750)
   }
 
-  const canSubmit = agreed && !submitting
+  const canSubmit = !submitting
 
   return (
     <div className="h-full overflow-y-auto no-scrollbar flex flex-col">
@@ -136,17 +135,6 @@ export default function Confirm() {
             </li>
           ))}
         </ol>
-        <label className="flex items-start gap-3 mt-5 cursor-pointer min-h-[44px]">
-          <input
-            type="checkbox"
-            checked={agreed}
-            onChange={(e) => setAgreed(e.target.checked)}
-            className="mt-1 w-4 h-4 shrink-0 accent-[#D7CC8F]"
-          />
-          <span className="text-[13px] text-accent-dim">
-            Дорогие зрители, я ознакомлен с правилами
-          </span>
-        </label>
       </div>
 
       {errors.form && <p className="px-5 text-cinema-red text-[13px] mb-3">{errors.form}</p>}

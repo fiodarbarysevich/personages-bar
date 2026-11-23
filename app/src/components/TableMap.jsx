@@ -1,7 +1,41 @@
 import { useState } from 'react'
 
-// План зала по plan.png: пол — приглушённый ковёр «Оверлук» (pattern.jpg),
-// BAR внизу справа, PROJECTOR сверху, вход слева внизу, окно на верхней стене.
+// План зала по plan.png (1152×648): бар со 4 стульями сверху,
+// секретный зал справа с длинным столом на 8, вход снизу.
+// Пол — ковёр «Оверлук» (pattern.jpg), проглядывающий через бордовый фон.
+const GOLD = 'rgba(215, 204, 143, 0.75)'
+
+function Walls() {
+  return (
+    <svg
+      className="absolute inset-0 w-full h-full"
+      viewBox="0 0 1152 648"
+      preserveAspectRatio="none"
+      fill="none"
+      aria-hidden="true"
+    >
+      {/* Главный зал: верхняя стена с выступом бара, левая и нижняя стены, вход снизу */}
+      <path
+        d="M145 172 H285 V95 H585 V172 H831 V300 M831 430 V555 H775 M640 555 H145 V172"
+        stroke={GOLD}
+        strokeWidth="4"
+      />
+      {/* Секретный зал: примыкает справа, скруглённая правая стена, дверь в левой стене */}
+      <path
+        d="M831 170 H975 Q1015 170 1015 225 V375 Q1015 430 975 430 H831"
+        stroke={GOLD}
+        strokeWidth="4"
+      />
+      {/* Стойка бара (скруглённый верх) */}
+      <path
+        d="M285 172 V112 Q285 95 302 95 H568 Q585 95 585 112 V172"
+        stroke="rgba(215, 204, 143, 0.4)"
+        strokeWidth="3"
+      />
+    </svg>
+  )
+}
+
 export default function TableMap({ tables, selectedId, guests, onSelect }) {
   const [shakingId, setShakingId] = useState(null)
 
@@ -18,56 +52,57 @@ export default function TableMap({ tables, selectedId, guests, onSelect }) {
     <div className="px-4">
       <div
         className="relative w-full rounded-lg overflow-hidden"
-        style={{ aspectRatio: '16 / 9' }}
+        style={{ aspectRatio: '1152 / 648' }}
       >
-        {/* Пол — ковёр из «Сияния», приглушённый бордовым наложением */}
+        {/* Пол — ковёр из «Сияния», проглядывает через бордовое наложение */}
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: 'url(/assets/pattern.jpg)' }}
         />
-        <div className="absolute inset-0 bg-bg-primary/65" />
+        <div className="absolute inset-0 bg-bg-primary/85" />
 
-        {/* Стены: внешний и внутренний контур */}
-        <div className="absolute inset-[2%] border-2 border-accent/50 rounded-sm" />
-        <div className="absolute inset-[3.5%] border border-accent/25 rounded-sm" />
+        <Walls />
 
-        {/* Окно на верхней стене справа */}
-        <div className="absolute top-[2%] h-[1.5%] border-y border-accent/60" style={{ left: '72%', right: '12%' }} />
-
-        {/* PROJECTOR */}
-        <span className="absolute left-[58%] top-[6%] -translate-x-1/2 text-[7px] uppercase tracking-label text-accent-dim">
-          Projector
+        {/* Подписи */}
+        <span
+          className="absolute text-[8px] uppercase tracking-label text-accent/80"
+          style={{ left: '37.8%', top: '6%', transform: 'translateX(-50%)' }}
+        >
+          Bar
         </span>
-
-        {/* ВХОД — дуга у левой стены */}
-        <svg className="absolute left-[2%] bottom-[22%] w-[9%]" viewBox="0 0 40 40" aria-hidden="true">
-          <path d="M 4 36 A 32 32 0 0 1 36 4" fill="none" stroke="rgba(215,204,143,0.5)" strokeWidth="1.5" strokeDasharray="3 3" />
-        </svg>
-        <span className="absolute left-[7%] bottom-[17%] text-[7px] uppercase tracking-label text-accent-dim">
+        <span
+          className="absolute text-[7px] uppercase tracking-label text-accent-dim"
+          style={{ left: '61.4%', top: '89%', transform: 'translateX(-50%)' }}
+        >
           Вход
         </span>
 
-        {/* BAR — зона стойки */}
-        <div className="absolute left-[62%] right-[4%] top-[76%] bottom-[6%] border border-accent/40 bg-bg-elevated/60 rounded-sm flex items-center justify-center">
-          <span className="text-[9px] uppercase tracking-label text-accent/80">Bar</span>
-        </div>
-
-        {/* Столы */}
+        {/* Столы и барные стулья */}
         {tables.map((t) => {
           const selected = selectedId === t.id
           const disabled = t.taken || t.seats < guests
-          const radius = t.shape === 'square' ? 'rounded-[3px]' : 'rounded-[50%]'
+          const isStool = t.shape === 'stool'
+          const radius =
+            t.shape === 'circle' || isStool
+              ? 'rounded-full'
+              : t.shape === 'long'
+                ? 'rounded-full'
+                : 'rounded-[50%]'
           const state = selected
             ? 'bg-gold-bright text-bg-primary border-gold-bright table-selected'
             : disabled
-              ? 'bg-cinema-red-deep/25 border-cinema-red/40 text-accent/30 cursor-not-allowed'
-              : 'bg-accent/10 border-accent/70 text-accent cursor-pointer hover:bg-accent/25'
+              ? 'bg-cinema-red-deep/40 border-cinema-red/60 text-accent/40 cursor-not-allowed'
+              : 'bg-accent/20 border-accent text-accent cursor-pointer hover:bg-gold-bright hover:text-bg-primary hover:border-gold-bright hover:scale-110 hover:shadow-glow hover:z-10'
           return (
             <button
               key={t.id}
               onClick={() => handleTap(t)}
-              aria-label={`${t.label}, ${t.seats} мест${t.taken ? ', занят' : ''}`}
-              className={`absolute -translate-x-1/2 -translate-y-1/2 border flex items-center justify-center transition-all duration-200 ${radius} ${state} ${shakingId === t.id ? 'table-shake' : ''}`}
+              aria-label={`${t.label}, ${t.seats} ${
+                t.seats === 1 ? 'место' : 'мест'
+              }${t.taken ? ', занят' : ''}`}
+              className={`absolute -translate-x-1/2 -translate-y-1/2 border flex items-center justify-center transition-all duration-200 ${radius} ${state} ${
+                shakingId === t.id ? 'table-shake' : ''
+              }`}
               style={{
                 left: `${t.x}%`,
                 top: `${t.y}%`,
@@ -75,9 +110,11 @@ export default function TableMap({ tables, selectedId, guests, onSelect }) {
                 height: `${t.h}%`,
               }}
             >
-              <span className={`font-display text-[11px] ${t.taken ? 'line-through' : ''}`}>
-                {t.id.replace('T', '')}
-              </span>
+              {t.id.startsWith('T') && (
+                <span className={`font-display text-[11px] ${t.taken ? 'line-through' : ''}`}>
+                  {t.id.slice(1)}
+                </span>
+              )}
             </button>
           )
         })}

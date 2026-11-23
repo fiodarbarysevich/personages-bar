@@ -1,8 +1,6 @@
 import { motion } from 'framer-motion'
-import { Check, Copy } from 'lucide-react'
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Ticket, { formatDateRu } from '../components/Ticket'
+import Ticket from '../components/Ticket'
 import { Button } from '../components/ui'
 import { useBooking } from '../context/BookingContext'
 import { getLastBooking } from '../lib/bookingService'
@@ -10,7 +8,6 @@ import { getLastBooking } from '../lib/bookingService'
 export default function Success() {
   const navigate = useNavigate()
   const { booking, reset } = useBooking()
-  const [copied, setCopied] = useState(false)
 
   // Восстановление последней брони после перезагрузки
   const data = booking || getLastBooking()
@@ -18,17 +15,6 @@ export default function Success() {
   if (!data) {
     navigate('/', { replace: true })
     return null
-  }
-
-  const share = async () => {
-    const text = `PERSONAGES · билет ${data.id}\n${formatDateRu(data.date)}, ${data.time}\nСтол ${data.tableId.replace('T', '')}, ${data.guests} гост. · ${data.name}`
-    try {
-      await navigator.clipboard.writeText(text)
-    } catch {
-      // буфер обмена может быть недоступен — просто показываем тост
-    }
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1800)
   }
 
   const goHome = () => {
@@ -58,32 +44,18 @@ export default function Success() {
         transition={{ delay: 0.45, duration: 0.4 }}
         className="text-center text-accent/85 text-[14px] leading-relaxed mt-7 px-2"
       >
-        Дорогие зрители, спасибо, что выбрали PERSONAGES.
+        Дорогие зрители, спасибо за бронирование.
         <br />
-        Показ начнётся вовремя — до встречи в кино!
+        Ждём вас в «Персонажах»!
       </motion.p>
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.4 }}
-        className="mt-auto pt-8 space-y-2"
+        className="mt-auto pt-8"
       >
         <Button onClick={goHome}>На главную</Button>
-        <Button variant="ghost" onClick={share}>
-          {copied ? 'Скопировано' : 'Поделиться билетом'}
-        </Button>
-      </motion.div>
-
-      {/* Тост */}
-      <motion.div
-        initial={false}
-        animate={{ opacity: copied ? 1 : 0, y: copied ? 0 : 12 }}
-        transition={{ duration: 0.25 }}
-        className="pointer-events-none fixed bottom-24 left-1/2 -translate-x-1/2 bg-accent text-bg-primary text-[13px] px-4 py-2 rounded-full flex items-center gap-1.5"
-      >
-        {copied ? <Check size={14} /> : <Copy size={14} />}
-        Детали брони скопированы
       </motion.div>
     </div>
   )

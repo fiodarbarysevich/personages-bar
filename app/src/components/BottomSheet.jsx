@@ -37,7 +37,7 @@ export default function BottomSheet({ table, onConfirm, onClose }) {
               </h3>
               <p className="flex items-center justify-center gap-1.5 text-accent-dim text-sm mt-2">
                 <Users size={14} strokeWidth={1.5} />
-                До {table.seats} мест
+                {table.seats === 1 ? '1 место' : `До ${table.seats} мест`}
               </p>
               {table.note && <p className="text-accent-dim text-[13px] italic mt-2">«{table.note}»</p>}
             </div>
